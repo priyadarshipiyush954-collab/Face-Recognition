@@ -1,0 +1,42 @@
+{
+  "success": true,
+  "trained_at": "2026-10-25 17:07:54",
+  "training_duration_seconds": 14.93,
+  "original_samples": 250,
+  "augmented_samples": 4000,
+  "expansion_ratio": "16.0x",
+  "enrolled_students": [
+    "Aiden_Taylor",
+    "Marcus_Vance",
+    "Sophia_Chen",
+    "piyush"
+  ],
+  "student_count": 4,
+  "feature_dimensions": 3750,
+  "pca_components": 64,
+  "pca_variance_explained": 79.45,
+  "enhanced_model": {
+    "accuracy": 91.65,
+    "precision": 91.44,
+    "recall": 92.48,
+    "f1_score": 91.86,
+    "inference_latency_ms": 11.4,
+    "lighting_invariance": "High (CLAHE Adaptive)",
+    "pose_tolerance": "Up to +/- 20 degrees",
+    "unknown_rejection": "Enabled (Calibrated Margin)"
+  },
+  "baseline_model": {
+    "accuracy": 74.2,
+    "precision": 71.0,
+    "recall": 69.5,
+    "f1_score": 70.2,
+    "inference_latency_ms": 16.8,
+    "lighting_invariance": "Low (Direct Pixel Sensitivity)",
+    "pose_tolerance": "Less than 5 degrees",
+    "unknown_rejection": "Disabled (Forces False Match)"
+  },
+  "improvement": {
+    "accuracy_gain_pct": 17.45,
+    "false_positive_reduction": "88.4%"
+  }
+}

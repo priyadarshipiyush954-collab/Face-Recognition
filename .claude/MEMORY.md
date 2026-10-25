@@ -1,0 +1,2 @@
+- [Project Status](memory/project-status.md) — Phase 1 liveness detection COMPLETE (12/12 tests passing). Phase 2 deep embeddings ready to start
+- [Codebase Map](memory/codebase-map.md) — Key files: ml_engine.py, liveness_detector.py (NEW), server.py, attendance_manager.py
