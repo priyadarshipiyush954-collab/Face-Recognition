@@ -2,6 +2,9 @@
 
 An ultra-modern, high-accuracy Face Recognition and Attendance platform featuring a **Liquid Glass** aesthetic, interactive **Waterflow** fluid dynamics, smooth **scroll animations**, and an enterprise-grade neural machine learning pipeline.
 
+## Live Demo
+[Open AURA VISION](https://face-recognition-mgfi.vercel.app/)
+
 ---
 
 ## 📑 Table of Contents
