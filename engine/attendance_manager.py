@@ -8,11 +8,17 @@ Attendance Manager for Face Recognition System
 
 import os
 import csv
+import tempfile
 import time
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 
-ATTENDANCE_DIR_DEFAULT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "Attendance"))
+if os.getenv("VERCEL"):
+    # Serverless disk is temporary and per-instance; use /tmp to avoid writes
+    # to the read-only repository bundle.
+    ATTENDANCE_DIR_DEFAULT = os.path.join(tempfile.gettempdir(), "aura-attendance")
+else:
+    ATTENDANCE_DIR_DEFAULT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "Attendance"))
 
 
 class AttendanceManager:
@@ -20,10 +26,13 @@ class AttendanceManager:
         self.attendance_dir = attendance_dir
         self.cooldown_seconds = cooldown_seconds
         os.makedirs(self.attendance_dir, exist_ok=True)
-        # Also ensure Attandance folder exists for backwards compatibility
-        alt_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "Attandance"))
-        os.makedirs(alt_dir, exist_ok=True)
-        self.alt_dir = alt_dir
+        if os.getenv("VERCEL"):
+            self.alt_dir = self.attendance_dir
+        else:
+            # Also ensure Attandance folder exists for backwards compatibility
+            alt_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "Attandance"))
+            os.makedirs(alt_dir, exist_ok=True)
+            self.alt_dir = alt_dir
         self.last_punch_times: Dict[str, float] = {}
 
     def get_today_filename(self) -> str:

@@ -1,0 +1,4 @@
+fastapi>=0.115,<1
+numpy>=1.26,<3
+opencv-python-headless>=4.10,<5
+scikit-learn>=1.5,<2

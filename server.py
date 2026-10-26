@@ -5,7 +5,9 @@ live training, enrollment, and attendance tracking.
 """
 
 import os
+import shutil
 import sys
+import tempfile
 import time
 import base64
 import cv2
@@ -38,8 +40,17 @@ app.add_middleware(
 )
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, "data")
 STATIC_DIR = os.path.join(BASE_DIR, "static")
+OUTPUT_DIR = os.path.join(BASE_DIR, "dist")
+
+# Vercel's deployment filesystem is read-only. Copy the bundled seed data into
+# the function's temporary directory so enrollment and training do not fail.
+if os.getenv("VERCEL"):
+    DATA_DIR = os.path.join(tempfile.gettempdir(), "aura-vision-data")
+    if not os.path.isdir(DATA_DIR):
+        shutil.copytree(os.path.join(BASE_DIR, "data"), DATA_DIR, dirs_exist_ok=True)
+else:
+    DATA_DIR = os.path.join(BASE_DIR, "data")
 
 pipeline = FaceRecognitionPipeline(data_dir=DATA_DIR)
 attendance_mgr = AttendanceManager()
@@ -344,18 +355,20 @@ def generate_synthetic_data():
     }
 
 
-# Mount static assets
-app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+# Serve Vite's production build from the FastAPI app. API routes above this
+# mount keep their /api paths; local runs without a build use the source files.
+if os.path.isfile(os.path.join(OUTPUT_DIR, "index.html")):
+    app.mount("/", StaticFiles(directory=OUTPUT_DIR, html=True), name="frontend")
+else:
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
-
-@app.get("/")
-def serve_index():
-    """Serves the primary liquid glass web application."""
-    index_path = os.path.join(STATIC_DIR, "index.html")
-    if os.path.exists(index_path):
-        return FileResponse(index_path)
-    return {"message": "AURA Vision API Online. Static files generating..."}
-
+    @app.get("/")
+    def serve_index():
+        """Serves the source page during local development."""
+        index_path = os.path.join(STATIC_DIR, "index.html")
+        if os.path.exists(index_path):
+            return FileResponse(index_path)
+        return {"message": "AURA Vision API Online. Static files generating..."}
 
 if __name__ == "__main__":
     import uvicorn
